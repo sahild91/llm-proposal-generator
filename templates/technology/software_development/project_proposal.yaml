@@ -1,0 +1,272 @@
+# Software Project Proposal Template
+# Based on your existing proposal generation logic from llm_client.py
+
+template_id: "software_project_proposal"
+name: "Software Project Proposal"
+description: "Comprehensive project proposal for software development projects including technical approach, deliverables, timeline, and budget estimation"
+version: "1.0"
+
+# Classification
+industry: "technology"
+category: "software_development"
+document_type: "proposal"
+
+# Target audience
+company_sizes: 
+  - "startup"
+  - "small"
+  - "medium"
+tone: "startup_agile"
+
+# Template structure - converted from your existing _create_proposal_prompt
+structure:
+  sections:
+    - id: "executive_summary"
+      title: "Executive Summary"
+      required: true
+      order: 1
+      prompt_template: |
+        Create a compelling executive summary that captures the project's value proposition.
+        Highlight the client's key challenges, our proposed solution, and expected business impact.
+        Include a brief overview of our company's expertise in the relevant specializations.
+        Keep it concise but comprehensive - this is what executives will read first.
+        Focus on business value and ROI for the client.
+
+    - id: "project_overview"
+      title: "Project Overview"
+      required: true
+      order: 2
+      prompt_template: |
+        Provide a detailed project overview based on the project requirements and context:
+        - Clear project objectives and scope definition
+        - Target audience and end users
+        - Key functionality and features to be delivered
+        - Success criteria and measurable outcomes
+        - Project constraints and assumptions
+        
+        Use the project name, client information, and requirements provided to make this specific and relevant.
+        Demonstrate understanding of the client's business needs and technical requirements.
+
+    - id: "technical_approach"
+      title: "Technical Approach"
+      required: true
+      order: 3
+      prompt_template: |
+        Detail the technical implementation approach based on the hardware components and software modules specified:
+        - Recommended technology stack and architecture decisions with rationale
+        - Development methodology (Agile, Scrum, etc.) and why it fits this project
+        - Integration requirements and external dependencies
+        - Scalability and performance considerations for future growth
+        - Security measures and data protection strategies
+        - Quality assurance and testing approach
+        
+        Base all recommendations on the specific hardware components and software modules provided.
+        Highlight our company's technical expertise and experience with similar projects.
+
+    - id: "deliverables"
+      title: "Project Deliverables"
+      required: true
+      order: 4
+      prompt_template: |
+        List all project deliverables in detail, organized by category:
+        
+        **Software Components:**
+        - Core application modules and features
+        - Integration components and APIs
+        - Database design and implementation
+        
+        **Documentation Deliverables:**
+        - Technical documentation (architecture, API docs, database schema)
+        - User documentation (user manuals, admin guides)
+        - Deployment and maintenance documentation
+        
+        **Testing & Quality Assurance:**
+        - Test plans and test cases
+        - Testing reports and quality metrics
+        - Performance and security testing results
+        
+        **Training & Knowledge Transfer:**
+        - User training materials and sessions
+        - Technical knowledge transfer to client team
+        - Ongoing support documentation
+        
+        Each deliverable should include acceptance criteria and quality standards.
+
+    - id: "timeline_milestones"
+      title: "Timeline & Milestones"
+      required: true
+      order: 5
+      prompt_template: |
+        Create a realistic project timeline with key milestones based on the expected duration provided:
+        
+        **Project Phases:**
+        - Phase breakdown with clear objectives and deliverables
+        - Major milestones and decision points
+        - Client review and feedback cycles
+        
+        **Timeline Details:**
+        - Detailed task breakdown for each phase
+        - Critical path activities and dependencies
+        - Resource allocation across the timeline
+        - Buffer time for testing, refinement, and unexpected issues
+        
+        **Risk Mitigation:**
+        - Contingency plans for potential delays
+        - Parallel work streams to optimize timeline
+        - Early delivery opportunities for quick wins
+        
+        Use the expected duration as a guideline but provide realistic estimates based on project complexity.
+
+    - id: "resource_requirements"
+      title: "Resource Requirements"
+      required: true
+      order: 6
+      prompt_template: |
+        Specify all resources needed for project success:
+        
+        **Team Composition:**
+        - Required roles and responsibilities
+        - Skill sets and expertise levels needed
+        - Team size and allocation throughout project phases
+        - Key personnel assignments and availability
+        
+        **Technical Resources:**
+        - Development environment and tools
+        - Hardware requirements for development and testing
+        - Software licenses and third-party services
+        - Infrastructure needs (servers, databases, cloud services)
+        
+        **Client Resource Commitments:**
+        - Required client involvement and time commitments
+        - Access to systems, data, and subject matter experts
+        - Decision-making authority and approval processes
+        - Testing and feedback participation requirements
+        
+        Include both technical and non-technical resource needs with clear expectations.
+
+    - id: "budget_estimation"
+      title: "Budget Estimation"
+      required: true
+      order: 7
+      prompt_template: |
+        Provide a transparent and detailed budget breakdown:
+        
+        **Development Costs:**
+        - Labor costs by role and phase
+        - Development time estimates with hourly rates
+        - Project management and coordination costs
+        
+        **Technology and Infrastructure:**
+        - Software licenses and tools
+        - Cloud services and hosting costs
+        - Third-party integrations and APIs
+        - Hardware requirements (if any)
+        
+        **Additional Services:**
+        - Training and knowledge transfer
+        - Documentation and user materials
+        - Testing and quality assurance
+        - Post-launch support and maintenance
+        
+        **Investment Protection:**
+        - Contingency buffer for scope changes
+        - Payment schedule aligned with milestones
+        - Value delivered at each payment milestone
+        
+        Justify all costs with clear value propositions and market benchmarks.
+        Highlight the ROI and long-term value for the client.
+
+    - id: "risk_assessment"
+      title: "Risk Assessment & Mitigation"
+      required: true
+      order: 8
+      prompt_template: |
+        Identify and address potential project risks with mitigation strategies:
+        
+        **Technical Risks:**
+        - Technology integration challenges and solutions
+        - Performance and scalability concerns
+        - Third-party dependency risks
+        - Data migration and compatibility issues
+        
+        **Project Management Risks:**
+        - Timeline and resource availability risks
+        - Scope creep and change management
+        - Communication and coordination challenges
+        - Quality assurance and testing risks
+        
+        **Business Risks:**
+        - Market changes and evolving requirements
+        - Budget constraints and funding issues
+        - Stakeholder alignment and decision-making
+        - Competitive pressures and time-to-market
+        
+        **Mitigation Strategies:**
+        - Specific actions to prevent or minimize each risk
+        - Contingency plans and alternative approaches
+        - Early warning indicators and monitoring
+        - Risk ownership and escalation procedures
+        
+        Demonstrate proactive risk management and preparedness for challenges.
+
+    - id: "terms_conditions"
+      title: "Terms & Conditions"
+      required: true
+      order: 9
+      prompt_template: |
+        Outline key business terms and conditions:
+        
+        **Project Scope and Management:**
+        - Scope definition and change management process
+        - Project governance and decision-making authority
+        - Communication protocols and reporting procedures
+        - Quality standards and acceptance criteria
+        
+        **Intellectual Property:**
+        - Code ownership and licensing arrangements
+        - Custom development vs. existing IP usage
+        - Third-party component licensing
+        - Client data ownership and usage rights
+        
+        **Legal and Compliance:**
+        - Confidentiality and data protection measures
+        - Compliance with relevant regulations and standards
+        - Liability limitations and insurance coverage
+        - Dispute resolution and escalation procedures
+        
+        **Commercial Terms:**
+        - Payment schedule and terms
+        - Late payment penalties and collection procedures
+        - Contract termination conditions and procedures
+        - Support and warranty provisions post-delivery
+        
+        Keep terms fair and balanced to protect both parties while enabling project success.
+
+# Template variants for different contexts
+variants:
+  - "software_project_proposal_enterprise"
+  - "software_project_proposal_consulting" 
+
+# Industry-specific requirements
+compliance_requirements:
+  - "Data protection and privacy compliance"
+  - "Software development best practices and standards"
+  - "Quality assurance and testing standards"
+  - "Security and access control measures"
+
+# Generation settings
+estimated_time_minutes: 45
+complexity_level: "high"
+prerequisites:
+  - "Project requirements clearly defined and documented"
+  - "Client information and contact details available"
+  - "Technology preferences and constraints identified"
+  - "Budget range and timeline expectations established"
+  - "Key stakeholders identified and engaged"
+
+# Usage metadata (will be auto-populated by the system)
+usage_stats:
+  created_date: "2024-01-01"
+  last_modified: "2024-01-01"
+  usage_count: 0
+  success_rate: 0.0

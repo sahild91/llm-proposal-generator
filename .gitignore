@@ -165,3 +165,7 @@ build/
 # Example: Ignore specific client data
 # clients/confidential/
 # proposals/draft/
+
+# Test Reports can be excluded
+test_report.html
+assets/
