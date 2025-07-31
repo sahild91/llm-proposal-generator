@@ -1,0 +1,28 @@
+
+# Core dependencies
+requests>=2.31.0
+PyYAML>=6.0.1
+
+# Document export dependencies
+reportlab>=4.0.4
+python-docx>=1.1.0
+Pillow>=10.0.1
+
+# Optional dependencies for enhanced functionality
+# Uncomment as needed:
+
+# For advanced markdown processing
+markdown>=3.5.1
+pygments>=2.16.1
+
+# For local LLM support (future enhancement)  
+llama-cpp-python>=0.2.11
+
+# For better text processing
+nltk>=3.8.1
+
+# Development dependencies (optional)
+pytest>=7.4.3
+pytest-cov>=4.1.0
+black>=23.9.1
+flake8>=6.1.0

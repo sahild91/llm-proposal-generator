@@ -1,0 +1,73 @@
+# LLM Proposal Generator - LLM Configuration Template
+# Copy this file to ../llm_config.yaml and configure your settings
+
+# LLM Provider Configuration
+llm:
+  # Provider options: openai, anthropic, local
+  provider: openai
+  
+  # API credentials (not needed for local)
+  api_key: YOUR_API_KEY_HERE
+  
+  # Model selection
+  # OpenAI: gpt-4, gpt-4-turbo, gpt-3.5-turbo
+  # Anthropic: claude-3-opus-20240229, claude-3-sonnet-20240229, claude-3-haiku-20240307
+  # Local: depends on your setup
+  model: gpt-4
+  
+  # API endpoints
+  # OpenAI: https://api.openai.com/v1/chat/completions
+  # Anthropic: https://api.anthropic.com/v1/messages
+  # Local LLM: http://localhost:8080/completion (or your server)
+  endpoint: https://api.openai.com/v1/chat/completions
+  
+  # Generation parameters
+  max_tokens: 4000
+  temperature: 0.7
+
+# Application Settings
+app:
+  # Auto-save settings
+  auto_save: true
+  auto_save_interval: 30  # seconds
+  
+  # UI theme (future enhancement)
+  theme: default
+  
+  # Default project settings
+  default_project_type: Software
+  
+  # Default output format for exports
+  default_export_format: "pdf"  # pdf, docx, markdown, html
+  
+  # File management
+  backup_enabled: true
+  max_versions: 10
+
+# Advanced Settings
+advanced:
+  # Enable debug logging
+  debug: false
+  
+  # Request timeout (seconds)
+  timeout: 60
+  
+  # Retry settings
+  max_retries: 3
+  retry_delay: 1
+
+# Provider-specific settings
+providers:
+  openai:
+    # Additional OpenAI-specific settings
+    organization: ""  # Optional organization ID
+    
+  anthropic:
+    # Additional Anthropic-specific settings
+    version: "2023-06-01"
+    
+  local:
+    # Local LLM settings
+    model_path: "/path/to/your/model"
+    context_length: 4096
+    gpu_layers: 0  # Number of layers to run on GPU

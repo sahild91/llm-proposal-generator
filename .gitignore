@@ -1,0 +1,167 @@
+# LLM Proposal Generator - .gitignore
+
+# Configuration files with sensitive data
+config/llm_config.yaml
+config/company_config.yaml
+
+# Keep template files but ignore actual config
+!config/templates/
+
+# Project data and generated files
+Projects/
+*.db
+meta.db
+
+# API keys and secrets
+*.key
+*.secret
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Windows
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Log files
+*.log
+logs/
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Export test files (optional - remove if you want to track exports)
+exports/
+output/
+generated_docs/
+
+# Company logos and assets (optional - remove if you want to track assets)
+assets/*.png
+assets/*.jpg
+assets/*.jpeg
+assets/*.gif
+
+# Development and testing
+test_projects/
+sample_data/
+scratch/
+
+# Documentation builds
+docs/_build/
+
+# PyCharm
+.idea/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# Local development settings
+local_settings.py
+settings_local.py
+
+# Compiled executables (if using PyInstaller)
+*.exe
+dist/
+build/
+
+# Package files
+*.tar.gz
+*.zip
+*.rar
+
+# Custom ignore patterns for this project
+# Add any project-specific files you don't want to track
+
+# Example: Ignore specific client data
+# clients/confidential/
+# proposals/draft/

@@ -1,0 +1,60 @@
+# LLM Proposal Generator - Company Configuration Template
+# Copy this file to ../company_config.yaml and configure your settings
+
+# Company Information
+company:
+  # Basic company details
+  name: "Your Company Name"
+  tagline: "Your Company Tagline"
+  logo_path: ""  # Path to company logo file
+  website: "https://yourcompany.com"
+  email: "contact@yourcompany.com"
+  phone: "+1 (555) 123-4567"
+  address: |
+    123 Business Street
+    Suite 100
+    City, State 12345
+    Country
+  
+  # Industry and specialization
+  industry: "Technology Solutions"
+  specializations:
+    - "Software Development"
+    - "System Integration"
+    - "Digital Transformation"
+  
+  # Legal information
+  registration_number: "REG123456789"
+  tax_id: "TAX987654321"
+  
+  # Document authoring
+  default_author: "Project Manager"  # Default author for proposals
+  authors:
+    - "John Smith - Senior Project Manager"
+    - "Jane Doe - Technical Lead" 
+    - "Mike Johnson - Business Analyst"
+    - "Sarah Wilson - Solutions Architect"
+  
+  # Additional company details
+  established_year: 2020
+  employee_count: "50-100"
+  certifications:
+    - "ISO 9001:2015"
+    - "ISO 27001:2013"
+  
+  # Social media and additional contacts
+  social_media:
+    linkedin: "https://linkedin.com/company/yourcompany"
+    twitter: "https://twitter.com/yourcompany"
+  
+  # Office locations (if multiple)
+  offices:
+    headquarters:
+      name: "Headquarters"
+      address: |
+        123 Business Street
+        Suite 100
+        City, State 12345
+        Country
+      phone: "+1 (555) 123-4567"
+    # Add more offices as needed
