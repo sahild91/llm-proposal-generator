@@ -2,11 +2,11 @@ import hashlib
 import json
 import os
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 import logging
 from datetime import datetime
 
-from .template_system import (
+from template_system import (
     DocumentTemplate, IndustryType, CompanySize, ToneStyle, 
     DocumentType, ComplexityLevel, TemplateValidationError,
     load_template_from_file
@@ -474,4 +474,292 @@ class TemplateManager:
     
     def __contains__(self, template_id: str) -> bool:
         """Check if template exists"""
+        return template_id in self.templates_cache
+
+    def get_available_templates(self, filters: Optional[Dict[str, Any]] = None) -> List[DocumentTemplate]:
+        """
+        Get available templates with optional filtering
+        
+        Args:
+            filters: Optional dictionary with filter criteria:
+                - industry: str - Filter by industry
+                - category: str - Filter by category  
+                - document_type: str - Filter by document type
+                - company_size: str - Filter by company size
+                - tone: str - Filter by tone
+                - complexity: str - Filter by complexity level
+        
+        Returns:
+            List of DocumentTemplate objects matching filters
+        """
+        if not filters:
+            return list(self.templates_cache.values())
+        
+        results = list(self.templates_cache.values())
+        
+        # Apply industry filter
+        if filters.get('industry'):
+            results = [t for t in results if t.industry.value == filters['industry']]
+        
+        # Apply category filter
+        if filters.get('category'):
+            results = [t for t in results if t.category == filters['category']]
+        
+        # Apply document type filter
+        if filters.get('document_type'):
+            results = [t for t in results if t.document_type.value == filters['document_type']]
+        
+        # Apply company size filter
+        if filters.get('company_size'):
+            try:
+                size_enum = CompanySize(filters['company_size'])
+                results = [t for t in results if size_enum in t.company_sizes]
+            except ValueError:
+                # Invalid company size, return empty results
+                return []
+        
+        # Apply tone filter
+        if filters.get('tone'):
+            results = [t for t in results if t.tone.value == filters['tone']]
+        
+        # Apply complexity filter
+        if filters.get('complexity'):
+            results = [t for t in results if t.complexity_level.value == filters['complexity']]
+        
+        return results
+
+    def get_template(self, template_id: str) -> Optional[DocumentTemplate]:
+        """
+        Get a specific template by ID
+        
+        Args:
+            template_id: The unique identifier for the template
+            
+        Returns:
+            DocumentTemplate if found, None otherwise
+        """
+        return self.templates_cache.get(template_id)
+
+    def get_templates_by_filter(self, filter_type: str, filter_value: str) -> List[DocumentTemplate]:
+        """
+        Get templates by a specific filter type and value
+        
+        Args:
+            filter_type: Type of filter ('industry', 'category', 'document_type', etc.)
+            filter_value: Value to filter by
+            
+        Returns:
+            List of matching templates
+        """
+        filter_map = {
+            'industry': self.get_templates_by_industry,
+            'document_type': self.get_templates_by_document_type,
+            'tone': self.get_templates_by_tone,
+            'complexity': self.get_templates_by_complexity,
+            'company_size': self.get_templates_by_company_size
+        }
+        
+        if filter_type == 'category':
+            # Category requires industry context, so we need to search differently
+            return [t for t in self.templates_cache.values() if t.category == filter_value]
+        
+        filter_func = filter_map.get(filter_type)
+        if filter_func:
+            return filter_func(filter_value)
+        else:
+            return []
+
+    def get_template_metadata(self, template_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get metadata for a specific template without loading full content
+        
+        Args:
+            template_id: The template identifier
+            
+        Returns:
+            Dictionary with template metadata or None if not found
+        """
+        template = self.get_template(template_id)
+        if not template:
+            return None
+        
+        return {
+            'template_id': template.template_id,
+            'name': template.name,
+            'description': template.description,
+            'industry': template.industry.value,
+            'category': template.category,
+            'document_type': template.document_type.value,
+            'company_sizes': [size.value for size in template.company_sizes],
+            'tone': template.tone.value,
+            'complexity_level': template.complexity_level.value,
+            'estimated_time_minutes': template.estimated_time_minutes,
+            'section_count': len(template.sections),
+            'required_sections': len([s for s in template.sections if s.required]),
+            'optional_sections': len([s for s in template.sections if not s.required]),
+            'prerequisites': template.prerequisites,
+            'compliance_requirements': template.compliance_requirements,
+            'variants': template.variants
+        }
+
+    def get_templates_by_criteria(self, **criteria) -> List[DocumentTemplate]:
+        """
+        Advanced template filtering with multiple criteria
+        
+        Args:
+            **criteria: Keyword arguments for filtering:
+                - industries: List[str] - Multiple industries
+                - document_types: List[str] - Multiple document types  
+                - company_sizes: List[str] - Multiple company sizes
+                - max_complexity: str - Maximum complexity level
+                - max_time_minutes: int - Maximum estimated time
+                - has_variants: bool - Templates with variants
+                - required_sections_only: bool - Only required sections
+        
+        Returns:
+            List of templates matching all criteria
+        """
+        results = list(self.templates_cache.values())
+        
+        # Filter by multiple industries
+        if criteria.get('industries'):
+            industries = criteria['industries']
+            results = [t for t in results if t.industry.value in industries]
+        
+        # Filter by multiple document types
+        if criteria.get('document_types'):
+            doc_types = criteria['document_types']
+            results = [t for t in results if t.document_type.value in doc_types]
+        
+        # Filter by multiple company sizes
+        if criteria.get('company_sizes'):
+            company_sizes = criteria['company_sizes']
+            try:
+                size_enums = [CompanySize(size) for size in company_sizes]
+                results = [t for t in results if any(size in t.company_sizes for size in size_enums)]
+            except ValueError:
+                return []
+        
+        # Filter by maximum complexity
+        if criteria.get('max_complexity'):
+            complexity_order = {'low': 1, 'medium': 2, 'high': 3}
+            max_level = complexity_order.get(criteria['max_complexity'], 3)
+            results = [t for t in results if complexity_order.get(t.complexity_level.value, 3) <= max_level]
+        
+        # Filter by maximum time
+        if criteria.get('max_time_minutes'):
+            max_time = criteria['max_time_minutes']
+            results = [t for t in results if t.estimated_time_minutes <= max_time]
+        
+        # Filter by templates with variants
+        if criteria.get('has_variants'):
+            if criteria['has_variants']:
+                results = [t for t in results if t.variants]
+            else:
+                results = [t for t in results if not t.variants]
+        
+        # Filter by templates with only required sections
+        if criteria.get('required_sections_only'):
+            if criteria['required_sections_only']:
+                results = [t for t in results if all(s.required for s in t.sections)]
+        
+        return results
+
+    def get_template_suggestions(self, partial_name: str, limit: int = 5) -> List[Dict[str, Any]]:
+        """
+        Get template suggestions based on partial name matching
+        
+        Args:
+            partial_name: Partial template name to search for
+            limit: Maximum number of suggestions to return
+            
+        Returns:
+            List of template suggestions with relevance scores
+        """
+        suggestions = []
+        partial_lower = partial_name.lower()
+        
+        for template in self.templates_cache.values():
+            name_lower = template.name.lower()
+            desc_lower = template.description.lower()
+            
+            # Calculate relevance score
+            score = 0
+            if partial_lower in name_lower:
+                score += 10  # Higher score for name matches
+                if name_lower.startswith(partial_lower):
+                    score += 5  # Even higher for prefix matches
+            
+            if partial_lower in desc_lower:
+                score += 3  # Lower score for description matches
+            
+            if score > 0:
+                suggestions.append({
+                    'template': template,
+                    'score': score,
+                    'match_type': 'name' if partial_lower in name_lower else 'description'
+                })
+        
+        # Sort by score (descending) and limit results
+        suggestions.sort(key=lambda x: x['score'], reverse=True)
+        return suggestions[:limit]
+
+    def template_exists(self, template_id: str) -> bool:
+        """
+        Check if a template exists
+        
+        Args:
+            template_id: The template identifier to check
+            
+        Returns:
+            True if template exists, False otherwise
+        """
+        return template_id in self.templates_cache
+
+    def get_template_count(self, filters: Optional[Dict[str, Any]] = None) -> int:
+        """
+        Get count of templates matching optional filters
+        
+        Args:
+            filters: Optional filter criteria (same as get_available_templates)
+            
+        Returns:
+            Number of templates matching filters
+        """
+        return len(self.get_available_templates(filters))
+
+    def get_filter_options(self) -> Dict[str, List[str]]:
+        """
+        Get all available filter options
+        
+        Returns:
+            Dictionary with all possible filter values for each filter type
+        """
+        return {
+            'industries': self.get_available_industries(),
+            'document_types': self.get_all_document_types(),
+            'tones': self.get_all_tones(),
+            'complexity_levels': self.get_all_complexity_levels(),
+            'company_sizes': self.get_all_company_sizes(),
+            'categories': self._get_all_categories()
+        }
+
+    def _get_all_categories(self) -> List[str]:
+        """Get all unique categories across all templates"""
+        categories = set()
+        for template in self.templates_cache.values():
+            categories.add(template.category)
+        return sorted(list(categories))
+
+    # Enhanced __contains__ method for better template checking
+    def __contains__(self, template_id: str) -> bool:
+        """
+        Check if template exists using 'in' operator
+        
+        Args:
+            template_id: Template ID to check
+            
+        Returns:
+            True if template exists
+        """
         return template_id in self.templates_cache
