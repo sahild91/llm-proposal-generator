@@ -242,10 +242,8 @@ structure:
         
         Keep terms fair and balanced to protect both parties while enabling project success.
 
-# Template variants for different contexts
-variants:
-  - "software_project_proposal_enterprise"
-  - "software_project_proposal_consulting" 
+# Template variants for different contexts - FIXED: Remove non-existent variants
+variants: []
 
 # Industry-specific requirements
 compliance_requirements:
