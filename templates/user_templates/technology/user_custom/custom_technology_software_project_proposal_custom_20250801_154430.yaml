@@ -1,0 +1,99 @@
+category: user_custom
+company_sizes:
+- startup
+- small
+- medium
+- large
+- enterprise
+complexity_level: medium
+compliance_requirements: []
+description: Custom template based on Software Project Proposal
+document_type: proposal
+estimated_time_minutes: 40
+industry: technology
+name: Software Project Proposal (Custom)
+prerequisites:
+- Custom template - review sections before use
+structure:
+  sections:
+  - id: executive_summary
+    order: 1
+    prompt_template: 'Create a compelling executive summary that captures the project''s
+      value proposition.
+
+      Highlight the c...'
+    required: true
+    title: Executive Summary
+  - id: project_overview
+    order: 2
+    prompt_template: 'Provide a detailed project overview based on the project requirements
+      and context:
+
+      - Clear project o...'
+    required: true
+    title: Project Overview
+  - id: technical_approach
+    order: 3
+    prompt_template: Detail the technical implementation approach based on the hardware
+      components and software modules s...
+    required: true
+    title: Technical Approach
+  - id: deliverables
+    order: 4
+    prompt_template: 'List all project deliverables in detail, organized by category:
+
+
+      **Software Components:**
+
+      - Core app...'
+    required: true
+    title: Project Deliverables
+  - id: timeline_milestones
+    order: 5
+    prompt_template: 'Create a realistic project timeline with key milestones based
+      on the expected duration provided:
+
+
+      **...'
+    required: true
+    title: Timeline & Milestones
+  - id: resource_requirements
+    order: 6
+    prompt_template: 'Specify all resources needed for project success:
+
+
+      **Team Composition:**
+
+      - Required roles and respon...'
+    required: true
+    title: Resource Requirements
+  - id: budget_estimation
+    order: 7
+    prompt_template: 'Provide a transparent and detailed budget breakdown:
+
+
+      **Development Costs:**
+
+      - Labor costs by role a...'
+    required: true
+    title: Budget Estimation
+  - id: risk_assessment
+    order: 8
+    prompt_template: 'Identify and address potential project risks with mitigation
+      strategies:
+
+
+      **Technical Risks:**
+
+      - Tec...'
+    required: true
+    title: Risk Assessment & Mitigation
+template_id: custom_technology_software_project_proposal_custom_20250801_154430
+tone: startup_agile
+usage_stats:
+  created_date: '2025-08-01'
+  last_modified: '2025-08-01'
+  success_rate: 0.0
+  usage_count: 0
+variants: []
+version: '1.0'

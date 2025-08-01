@@ -302,14 +302,24 @@ class EditorPanel:
             messagebox.showerror("Preview Error", f"Could not preview template: {e}")
 
     def show_template_preview_dialog(self, preview):
-        """Show detailed template preview with customization options - ENHANCED VERSION"""
+        """Show detailed template preview with customization options - Enhanced"""
         dialog = tk.Toplevel(self.main_window.root)
         dialog.title(f"Template Preview: {preview['name']}")
-        dialog.geometry("800x700")  # Increased width for customization options
+        dialog.geometry("800x700") 
         dialog.resizable(True, True)
         dialog.transient(self.main_window.root)
         dialog.grab_set()
         
+        # Store dialog reference for child dialogs
+        self._preview_dialog = dialog
+        
+        # Center dialog on screen  
+        dialog.update_idletasks()
+        width = dialog.winfo_width()
+        height = dialog.winfo_height()
+        x = (dialog.winfo_screenwidth() // 2) - (width // 2)
+        y = (dialog.winfo_screenheight() // 2) - (height // 2)
+        dialog.geometry(f"800x700+{x}+{y}")
         # Create main container with proper scrolling
         container = ttk.Frame(dialog)
         container.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
@@ -428,7 +438,7 @@ class EditorPanel:
         button_frame = ttk.Frame(container)
         button_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=(10, 0))
         
-        # Buttons
+        # Buttons - FIXED: Pass dialog reference correctly
         ttk.Button(button_frame, text="Use Original Template", 
                 command=lambda: self.use_template_from_preview(dialog, preview)).pack(side=tk.LEFT)
         
@@ -439,7 +449,44 @@ class EditorPanel:
         ttk.Button(button_frame, text="Preview Custom", 
                 command=lambda: self.preview_custom_template(preview, section_vars, section_desc_vars)).pack(side=tk.LEFT, padx=(10, 0))
         
-        ttk.Button(button_frame, text="Close", command=lambda: self.close_preview_dialog(dialog, canvas)).pack(side=tk.RIGHT)
+        ttk.Button(button_frame, text="Close", 
+                command=lambda: self.close_preview_dialog(dialog, canvas)).pack(side=tk.RIGHT)
+        
+        # FIXED: Handle dialog cleanup properly
+        def on_dialog_close():
+            try:
+                canvas.unbind_all("<MouseWheel>")
+            except:
+                pass
+            try:
+                dialog.grab_release()
+            except:
+                pass
+            dialog.destroy()
+            if hasattr(self, '_preview_dialog'):
+                delattr(self, '_preview_dialog')
+        
+        dialog.protocol("WM_DELETE_WINDOW", on_dialog_close)
+
+    def close_preview_dialog(self, dialog, canvas):
+        """Clean up and close preview dialog - FIXED"""
+        try:
+            if canvas:
+                canvas.unbind_all("<MouseWheel>")
+        except:
+            pass
+        
+        # Release modal grab before closing
+        try:
+            dialog.grab_release()
+        except:
+            pass
+        
+        dialog.destroy()
+        
+        # Clean up reference
+        if hasattr(self, '_preview_dialog'):
+            delattr(self, '_preview_dialog')
 
     def close_preview_dialog(self, dialog, canvas):
         """Clean up and close preview dialog"""
@@ -450,7 +497,7 @@ class EditorPanel:
         dialog.destroy()
     
     def preview_custom_template(self, original_preview, section_vars, section_desc_vars):
-        """Preview the customized template"""
+        """Preview the customized template - Fixed z-order and modal behavior"""
         try:
             # Create preview of customized template
             included_sections = []
@@ -469,11 +516,29 @@ class EditorPanel:
                 messagebox.showwarning("No Sections", "Please select at least one section to include")
                 return
             
-            # Show preview in a new dialog
-            preview_dialog = tk.Toplevel(self.main_window.root)
+            # FIXED: Get the parent preview dialog reference
+            parent_dialog = getattr(self, '_preview_dialog', self.main_window.root)
+            
+            # Create preview dialog - FIXED: Set proper parent and modal behavior
+            preview_dialog = tk.Toplevel(parent_dialog)
             preview_dialog.title("Custom Template Preview")
             preview_dialog.geometry("600x400")
-            preview_dialog.transient(self.main_window.root)
+            
+            # CRITICAL FIX: Set transient to parent dialog, not main window
+            preview_dialog.transient(parent_dialog)
+            
+            # CRITICAL FIX: Use grab_set() to make it modal to parent
+            preview_dialog.grab_set()
+            
+            # CRITICAL FIX: Ensure it stays on top of parent
+            preview_dialog.lift()
+            preview_dialog.focus_force()
+            
+            # Position relative to parent dialog
+            parent_dialog.update_idletasks()  # Ensure parent geometry is updated
+            x = parent_dialog.winfo_x() + 50
+            y = parent_dialog.winfo_y() + 50
+            preview_dialog.geometry(f"600x400+{x}+{y}")
             
             main_frame = ttk.Frame(preview_dialog, padding=10)
             main_frame.pack(fill=tk.BOTH, expand=True)
@@ -497,7 +562,15 @@ class EditorPanel:
             
             tree.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
             
-            ttk.Button(main_frame, text="Close", command=preview_dialog.destroy).pack()
+            # FIXED: Close button with proper grab handling
+            def close_custom_preview():
+                preview_dialog.grab_release()
+                preview_dialog.destroy()
+            
+            ttk.Button(main_frame, text="Close", command=close_custom_preview).pack()
+            
+            # FIXED: Handle window close button (X)
+            preview_dialog.protocol("WM_DELETE_WINDOW", close_custom_preview)
             
         except Exception as e:
             messagebox.showerror("Preview Error", f"Could not preview custom template: {e}")
@@ -735,6 +808,33 @@ class EditorPanel:
         """Get the currently selected template ID"""
         return self.current_template_id
     
+    def use_template_from_preview(self, dialog, preview):
+        """Use the original template from preview without customization"""
+        try:
+            # Set the template selection in the UI
+            template_id = preview['template_id']
+            
+            # Find and set the industry
+            industry_formatted = self.format_industry_name(preview['industry'])
+            if industry_formatted in self.industry_combo['values']:
+                self.industry_var.set(industry_formatted)
+                self.on_industry_change()
+            
+            # Find and set the template
+            template_display_name = f"{preview['name']} ({preview['document_type'].title()})"
+            if template_display_name in self.template_combo['values']:
+                self.template_var.set(template_display_name)
+                self.on_template_change()
+            
+            # Close the preview dialog
+            self.close_preview_dialog(dialog, None)
+            
+            # Notify user
+            self.main_window.set_status(f"Selected template: {preview['name']}")
+            
+        except Exception as e:
+            messagebox.showerror("Template Selection Error", f"Could not select template: {e}")
+    
     def refresh_template_data(self):
         """Refresh template data (useful after template library updates)"""
         try:
@@ -815,8 +915,28 @@ class EditorPanel:
     
     def update_version_label(self, version_text: str):
         """Update the version label"""
-        self.version_label.config(text=version_text)
+        if hasattr(self, 'version_label'):
+            self.version_label.config(text=version_text)
+        else:
+            # Create version label if it doesn't exist
+            self._create_version_label(version_text)
+
+    def _create_version_label(self, initial_text: str = "No document loaded"):
+        """Create version label if it doesn't exist"""
+        try:
+            # Find appropriate parent frame to add version label
+            if hasattr(self, 'editor_frame'):
+                version_frame = ttk.Frame(self.editor_frame)
+                version_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=5, pady=2)
+                
+                self.version_label = ttk.Label(version_frame, text=initial_text, 
+                                            font=('Arial', 8), foreground='gray')
+                self.version_label.pack(side=tk.LEFT)
+        except Exception as e:
+            print(f"Could not create version label: {e}")
     
     def get_current_document_type(self) -> str:
         """Get the current document type"""
-        return self.doc_type_var.get()
+        if hasattr(self, 'current_template_id') and self.current_template_id:
+            return self.current_template_id
+        return "proposal"
